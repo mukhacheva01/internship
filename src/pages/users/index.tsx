@@ -19,6 +19,7 @@ import { useUsers } from '@/shared/hooks/use-users';
 import { useAuth } from '@/shared/hooks/use-auth';
 import { User } from '@/shared/types/user';
 import { UserModal } from '@/features/user-modal';
+import { StatsCard } from '@/shared/ui/stats-card';
 
 const { Title } = Typography;
 const { Header, Content } = Layout;
@@ -40,6 +41,7 @@ const StyledContent = styled(Content)`
 
 const StyledCard = styled(Card)`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
 `;
 
 const ClickableCell = styled.div`
@@ -180,11 +182,16 @@ export const UsersPage: React.FC = () => {
       </StyledHeader>
       
       <StyledContent>
+        {users && <StatsCard users={users} />}
+        
         <StyledCard>
           <Table
             columns={columns}
             dataSource={users}
             rowKey="id"
+            locale={{
+              emptyText: 'Пользователи не найдены',
+            }}
             pagination={{
               pageSize: 10,
               showSizeChanger: true,

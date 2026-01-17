@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { Modal, Form, Input, Button, notification } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Modal, Form, Input, Button, notification, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import { User, CreateUserData } from '@/shared/types/user';
 import { useCreateUser, useUpdateUser } from '@/shared/hooks/use-users';
 
@@ -11,6 +12,7 @@ interface UserModalProps {
 
 export const UserModal: React.FC<UserModalProps> = ({ visible, user, onClose }) => {
   const [form] = Form.useForm();
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
 
@@ -26,40 +28,65 @@ export const UserModal: React.FC<UserModalProps> = ({ visible, user, onClose }) 
           email: user.email || '',
           avatar: user.avatar,
         });
+        setAvatarUrl(user.avatar);
       } else {
         form.resetFields();
+        setAvatarUrl('');
       }
     }
   }, [visible, user, form]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setAvatarUrl(url);
+  };
 
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       
       if (isEditing && user) {
-        await updateUserMutation.mutateAsync({
+        updateUserMutation.mutate({
           id: user.id,
           name: values.name,
           email: values.email,
           avatar: values.avatar,
-        });
-        notification.success({
-          message: 'Пользователь обновлен',
-          description: 'Данные пользователя успешно обновлены',
+        }, {
+          onSuccess: () => {
+            notification.success({
+              message: 'Пользователь обновлен',
+              description: 'Данные пользователя успешно обновлены',
+            });
+            onClose();
+          },
+          onError: (error) => {
+            notification.error({
+              message: 'Ошибка обновления',
+              description: 'Не удалось обновить пользователя',
+            });
+          },
         });
       } else {
-        await createUserMutation.mutateAsync({
+        createUserMutation.mutate({
           name: values.name,
           email: values.email,
           avatar: values.avatar,
-        });
-        notification.success({
-          message: 'Пользователь создан',
-          description: 'Новый пользователь успешно создан',
+        }, {
+          onSuccess: () => {
+            notification.success({
+              message: 'Пользователь создан',
+              description: 'Новый пользователь успешно создан',
+            });
+            onClose();
+          },
+          onError: (error) => {
+            notification.error({
+              message: 'Ошибка создания',
+              description: 'Не удалось создать пользователя',
+            });
+          },
         });
       }
-      
-      onClose();
     } catch (error) {
       console.error('Validation failed:', error);
     }
@@ -136,10 +163,27 @@ export const UserModal: React.FC<UserModalProps> = ({ visible, user, onClose }) 
           name="avatar"
           rules={[
             { required: true, message: 'Пожалуйста, введите URL аватара!' },
-            { type: 'url', message: 'Введите корректную ссылку!' },
+            { 
+              type: 'url', 
+              message: 'Введите корректную ссылку!' 
+            },
+            {
+              pattern: /\.(jpg|jpeg|png|gif|webp)$/i,
+              message: 'URL должен содержать изображение (jpg, jpeg, png, gif, webp)',
+            },
           ]}
         >
-          <Input placeholder="https://example.com/avatar.jpg" />
+          <Input 
+            placeholder="https://example.com/avatar.jpg" 
+            onChange={handleAvatarChange}
+            addonAfter={
+              <Avatar 
+                src={avatarUrl} 
+                icon={<UserOutlined />} 
+                size="small"
+              />
+            }
+          />
         </Form.Item>
       </Form>
     </Modal>
