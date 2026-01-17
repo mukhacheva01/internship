@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'https://696b8df8624d7ddccaa183fb.mockapi.io/api/v1';
+export const API_BASE_URL = 'https://696b8df8624d7ddccaa183fb.mockapi.io';
 
 export const ENDPOINTS = {
   users: '/users',
