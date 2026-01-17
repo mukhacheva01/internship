@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/shared/hooks/use-auth';
 import { Spin } from 'antd';

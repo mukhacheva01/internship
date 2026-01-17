@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Card, Statistic, Row, Col } from 'antd';
 import { UserOutlined, TeamOutlined, CalendarOutlined } from '@ant-design/icons';
 import { User } from '@/shared/types/user';

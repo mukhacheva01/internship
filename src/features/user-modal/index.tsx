@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Form, Input, Button, notification, Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { User, CreateUserData } from '@/shared/types/user';
